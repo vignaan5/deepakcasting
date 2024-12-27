@@ -96,7 +96,7 @@ const CardHeader = styled(Box)({
 const LogoImage = styled('img')({
   height: '32px',
   objectFit: 'contain',
-  filter: 'brightness(0) invert(1)',
+  filter: 'brightness(0) invert(0)',
   padding: '4px'
 });
 

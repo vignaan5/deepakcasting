@@ -6,6 +6,7 @@ import cocaCola from './assets/images/cocacola.png';
 import dcasting from './assets/images/dcasting.png';
 import ModelGrid from './components/grid/ModelGrid';
 import Charishma from "./assets/images/charishma.jpg"
+import Navbar from './components/navbar/Navbar';
 
 
 
@@ -80,7 +81,8 @@ function App() {
 
   return (
    <>
-   <ModelGrid models={models} />
+     <Navbar></Navbar>
+     <ModelGrid models={models}></ModelGrid>
    </>
   );
 }

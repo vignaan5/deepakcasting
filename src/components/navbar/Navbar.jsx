@@ -12,7 +12,9 @@ import {
   useMediaQuery,
   useTheme,
   styled,
-  InputBase
+  Menu,
+  MenuItem,
+  Collapse
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -25,6 +27,12 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ManIcon from '@mui/icons-material/Man';
+import WomanIcon from '@mui/icons-material/Woman';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import TheatersIcon from '@mui/icons-material/Theaters';
+import ElderlyIcon from '@mui/icons-material/Elderly';
 
 const StyledAppBar = styled(AppBar)({
   backgroundColor: '#ffffff',
@@ -80,24 +88,59 @@ const CallBackButton = styled(Button)(({ theme }) => ({
 }));
 
 const Logo = styled('img')({
-  height: '75px',
+  height: '60px',
   objectFit: 'contain'
+});
+
+const StyledMenuItem = styled(MenuItem)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '10px 20px',
+  '& .MuiSvgIcon-root': {
+    fontSize: '20px'
+  }
 });
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState({});
+  const [anchorEl, setAnchorEl] = useState({
+    Models: null,
+    'Actors & Models': null
+  });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const modelDropdownItems = [
+    { name: 'Male', icon: <ManIcon /> },
+    { name: 'Women', icon: <WomanIcon /> },
+    { name: 'Kids', icon: <ChildCareIcon /> },
+    { name: 'Plus Size', icon: <AccessibilityNewIcon /> }
+  ];
+
+  const actorsDropdownItems = [
+    { name: 'Actors', icon: <TheatersIcon /> },
+    { name: 'Salt & Pepper Models', icon: <ElderlyIcon /> }
+  ];
+
   const menuItems = [
     { name: 'Home', hasDropdown: false, icon: <HomeIcon /> },
-    { name: 'Models', hasDropdown: true, icon: <PeopleIcon /> },
-    { name: 'Actors & Models', hasDropdown: true, icon: <TheaterComedyIcon /> },
+    { name: 'Models', hasDropdown: true, icon: <PeopleIcon />, dropdownItems: modelDropdownItems },
+    { name: 'Actors & Models', hasDropdown: true, icon: <TheaterComedyIcon />, dropdownItems: actorsDropdownItems },
     { name: 'Influencer', hasDropdown: false, icon: <TrendingUpIcon /> },
     { name: 'About Us', hasDropdown: false, icon: <InfoIcon /> },
     { name: 'Contact Us', hasDropdown: false, icon: <ContactMailIcon /> },
     { name: 'Join Us', hasDropdown: false, icon: <PersonAddIcon /> }
   ];
+
+  const handleMenuClick = (event, name) => {
+    event.stopPropagation();
+    setAnchorEl(prev => ({
+      ...prev,
+      [name]: prev[name] ? null : event.currentTarget
+    }));
+  };
 
   return (
     <StyledAppBar>
@@ -114,13 +157,49 @@ const Navbar = () => {
             mx: 'auto'
           }}>
             {menuItems.map((item) => (
-              <NavButton 
-                key={item.name}
-                startIcon={item.icon}
-                endIcon={item.hasDropdown ? <KeyboardArrowDownIcon /> : null}
-              >
-                {item.name}
-              </NavButton>
+              <Box key={item.name}>
+                <NavButton 
+                  startIcon={item.icon}
+                  endIcon={
+                    item.hasDropdown && (
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleMenuClick(e, item.name)}
+                        sx={{ p: 0, minWidth: 0 }}
+                      >
+                        <KeyboardArrowDownIcon />
+                      </IconButton>
+                    )
+                  }
+                >
+                  {item.name}
+                </NavButton>
+                {item.hasDropdown && (
+                  <Menu
+                    anchorEl={anchorEl[item.name]}
+                    open={Boolean(anchorEl[item.name])}
+                    onClose={() => setAnchorEl(prev => ({ ...prev, [item.name]: null }))}
+                    PaperProps={{
+                      sx: {
+                        mt: 1,
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        minWidth: '200px'
+                      }
+                    }}
+                  >
+                    {item.dropdownItems.map((dropItem) => (
+                      <StyledMenuItem 
+                        key={dropItem.name}
+                        onClick={() => setAnchorEl(prev => ({ ...prev, [item.name]: null }))}
+                      >
+                        {dropItem.icon}
+                        {dropItem.name}
+                      </StyledMenuItem>
+                    ))}
+                  </Menu>
+                )}
+              </Box>
             ))}
           </Box>
         )}
@@ -158,21 +237,55 @@ const Navbar = () => {
         >
           <List>
             {menuItems.map((item) => (
-              <ListItem 
-                button 
-                key={item.name}
-                sx={{
-                  py: 2,
-                  px: 3,
-                  '&:hover': {
-                    backgroundColor: 'rgba(0,0,0,0.04)'
-                  }
-                }}
-              >
-                {item.icon}
-                <ListItemText primary={item.name} sx={{ ml: 2 }} />
-                {item.hasDropdown && <KeyboardArrowDownIcon />}
-              </ListItem>
+              <React.Fragment key={item.name}>
+                <ListItem 
+                  button 
+                  onClick={() => item.hasDropdown && setMobileExpanded(prev => ({
+                    ...prev,
+                    [item.name]: !prev[item.name]
+                  }))}
+                  sx={{
+                    py: 2,
+                    px: 3,
+                    '&:hover': {
+                      backgroundColor: 'rgba(0,0,0,0.04)'
+                    }
+                  }}
+                >
+                  {item.icon}
+                  <ListItemText primary={item.name} sx={{ ml: 2 }} />
+                  {item.hasDropdown && (
+                    <KeyboardArrowDownIcon 
+                      sx={{ 
+                        transform: mobileExpanded[item.name] ? 'rotate(180deg)' : 'none',
+                        transition: 'transform 0.3s'
+                      }} 
+                    />
+                  )}
+                </ListItem>
+                {item.hasDropdown && (
+                  <Collapse in={mobileExpanded[item.name]}>
+                    <List sx={{ pl: 4 }}>
+                      {item.dropdownItems.map((dropItem) => (
+                        <ListItem 
+                          button 
+                          key={dropItem.name}
+                          sx={{
+                            py: 1,
+                            px: 2,
+                            '&:hover': {
+                              backgroundColor: 'rgba(0,0,0,0.04)'
+                            }
+                          }}
+                        >
+                          {dropItem.icon}
+                          <ListItemText primary={dropItem.name} sx={{ ml: 2 }} />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                )}
+              </React.Fragment>
             ))}
           </List>
         </Drawer>

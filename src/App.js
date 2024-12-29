@@ -7,6 +7,8 @@ import dcasting from './assets/images/dcasting.png';
 import ModelGrid from './components/grid/ModelGrid';
 import Charishma from "./assets/images/charishma.jpg"
 import Navbar from './components/navbar/Navbar';
+import ModelProfile from './pages/ModelProfile';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 
 
@@ -79,10 +81,54 @@ function App() {
     },
   ];
 
+  const modelData = {
+    id: "1", // Add an ID
+    personalInfo: {
+      fullName: "Charishma Shrikar",
+      age: 21,
+      city: "Hyderabad",
+      physicalAttributes: {
+        height: 5.6,
+        weight: 51,
+        bust: "34",
+        waist: "28",
+        hips: "34"
+      }
+    },
+    comfortLevel: {
+      traditionalWear: true,
+      westernWear: true,
+      nightWear: true,
+      innerWear: false,
+      bikini: false,
+      semiNude: false,
+      nude: false
+    },
+    photos: [
+      Charishma, // Your imported image
+      Charishma,
+      Charishma
+    ]
+  };
+
+
+
+
+
+
+
+
   return (
    <>
-     <Navbar></Navbar>
-     <ModelGrid models={models}></ModelGrid>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<><Navbar></Navbar><ModelGrid models={models} /></>} />
+        <Route path="/model/:id" element={ <> <Navbar></Navbar> <ModelProfile model={modelData} /> </> } />
+      </Routes>
+    </BrowserRouter>
+    
+
+
    </>
   );
 }

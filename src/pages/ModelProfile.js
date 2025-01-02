@@ -5,7 +5,6 @@ import {
   Typography,
   Paper,
   Chip,
-  Divider,
   useTheme,
   useMediaQuery,
   styled
@@ -13,21 +12,19 @@ import {
 import {
   Height,
   Scale,
-  Straighten,
   Face,
-  Palette,
   LocationOn,
-  School,
-  Phone,
-  Email,
   CheckCircle,
-  Cancel,
-  Favorite,
-  CameraAlt,
+  PhotoCamera,
   TheaterComedy,
-  Theaters,
   Brush,
-  Language
+  Celebration,
+  LocalMall,
+  Checkroom,
+  Nightlife,
+  BeachAccess,
+  Movie,
+  CameraAlt
 } from '@mui/icons-material';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -51,9 +48,28 @@ const InfoItem = ({ icon, label, value }) => (
   </Box>
 );
 
+// Comfort level icons mapping
+const comfortLevelIcons = {
+  traditionalWear: <Checkroom />,
+  westernWear: <LocalMall />,
+  nightWear: <Nightlife />,
+  swimWear: <BeachAccess />,
+  printShoot: <PhotoCamera />,
+  rampShows: <Celebration />,
+  commercialAds: <Movie />,
+  fashionShoot: <CameraAlt />,
+  designerShoot: <Brush />,
+  actingShoot: <TheaterComedy />
+};
+
 const ModelProfile = ({ model }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Filter only the comfort levels that are true
+  const activeComfortLevels = Object.entries(model.comfortLevel)
+    .filter(([_, value]) => value === true)
+    .reduce((acc, [key]) => ({ ...acc, [key]: comfortLevelIcons[key] }), {});
 
   return (
     <Box sx={{ maxWidth: '1200px', margin: '0 auto', p: 2 }}>
@@ -135,20 +151,27 @@ const ModelProfile = ({ model }) => {
           </StyledPaper>
         </Grid>
 
-        {/* Comfort Level */}
-        <Grid item xs={12} md={6}>
+        {/* Comfort Level - Only showing active ones */}
+        <Grid item xs={12}>
           <StyledPaper>
             <Typography variant="h6" gutterBottom>
               Comfort Level
             </Typography>
             <Grid container spacing={1}>
-              {Object.entries(model.comfortLevel).map(([key, value]) => (
-                <Grid item xs={6} key={key}>
+              {Object.entries(activeComfortLevels).map(([key, icon]) => (
+                <Grid item xs={6} sm={4} md={3} key={key}>
                   <Chip
-                    icon={value ? <CheckCircle color="success" /> : <Cancel color="error" />}
+                    icon={icon}
                     label={key.replace(/([A-Z])/g, ' $1').trim()}
-                    variant={value ? "filled" : "outlined"}
-                    sx={{ width: '100%', mb: 1 }}
+                    color="primary"
+                    variant="outlined"
+                    sx={{ 
+                      width: '100%', 
+                      mb: 1,
+                      '& .MuiChip-icon': {
+                        color: 'inherit'
+                      }
+                    }}
                   />
                 </Grid>
               ))}

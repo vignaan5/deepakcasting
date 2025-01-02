@@ -9,6 +9,7 @@ import Charishma from "./assets/images/charishma.jpg"
 import Navbar from './components/navbar/Navbar';
 import ModelProfile from './pages/ModelProfile';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import ModelForm from './pages/ModelForm';
 
 
 
@@ -124,6 +125,7 @@ function App() {
       <Routes>
         <Route path="/" element={<><Navbar></Navbar><ModelGrid models={models} /></>} />
         <Route path="/model/:id" element={ <> <Navbar></Navbar> <ModelProfile model={modelData} /> </> } />
+        <Route path='/modeldetailsform' element={ <><Navbar/><ModelForm /></>} />
       </Routes>
     </BrowserRouter>
     
